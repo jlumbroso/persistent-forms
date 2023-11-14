@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Persistent Form Example</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* Custom CSS */
+        body {
+            padding-top: 60px;
+            background-color: #f8f9fa;
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            color: #28a745;
+        }
+
+        .form-control {
+            border-color: #28a745;
+        }
+        .btn-primary {
+            background-color: #28a745;
+            border-color: #28a745;
+        }
+        .btn-primary:hover {
+            background-color: #218838;
+            border-color: #1e7e34;
+        }
+
+        .github-ribbon {
+            position: fixed;
+            right: 0;
+            top: 0;
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+    <a href="https://github.com/you" class="github-ribbon">
+        <img decoding="async" width="149" height="149" src="https://github.blog/wp-content/uploads/2008/12/forkme_right_green_007200.png?resize=149%2C149" alt="Fork me on GitHub">
+    </a>
+
+    <div class="container mt-5">
+        <h1 class="text-center mb-4">Persistent Form Example</h1>
+        <p class="text-center mb-4">
+            This form demonstrates a persistent data entry solution. When you enter data into the form fields and reload the page, the data remains intact. This is achieved by storing the form data in the browser's local storage, ensuring that your input is not lost upon page refresh or accidental closure.
+        </p>
+
+        <form id="exampleForm">
+            <div class="form-group">
+                <label for="username">Username:</label>
+                <input type="text" class="form-control" id="username" name="username">
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" class="form-control" id="email" name="email">
+            </div>
+
+            <div class="form-group">
+                <label for="bio">Bio:</label>
+                <textarea class="form-control" id="bio" name="bio"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="birthday">Birthday:</label>
+                <input type="date" class="form-control" id="birthday" name="birthday">
+            </div>
+
+            <div class="form-group">
+                <label for="age">Age:</label>
+                <input type="number" class="form-control" id="age" name="age">
+            </div>
+
+            <div class="form-group">
+                <label>Favorite meal:</label>
+                <div>
+                    <input type="radio" id="breakfast" name="meal" value="breakfast">
+                    <label for="breakfast">Breakfast</label>
+                </div>
+                <div>
+                    <input type="radio" id="lunch" name="meal" value="lunch">
+                    <label for="lunch">Lunch</label>
+                </div>
+                <div>
+                    <input type="radio" id="dinner" name="meal" value="dinner">
+                    <label for="dinner">Dinner</label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="country">Country:</label>
+                <select class="form-control" id="country" name="country">
+                    <option value="">Please select</option>
+                    <option value="usa">USA</option>
+                    <option value="uk">UK</option>
+                    <option value="canada">Canada</option>
+                    <!-- Add more countries as needed -->
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="agreeTerms">Agree to terms:</label>
+                <input type="checkbox" class="form-check-input" id="agreeTerms" name="agreeTerms">
+            </div>
+
+            <!-- Buttons -->
+            <button type="button" class="btn btn-secondary" id="resetForm">Reset Form</button>
+            <button type="button" class="btn btn-info" id="setDefaultValues">Set Default Values</button>
+            <input type="submit" class="btn btn-primary" value="Submit">
+        </form>
+    </div>
+
+    <script src="persistentForm.js"></script>
+    <script>
+        document.getElementById('resetForm').addEventListener('click', function() {
+            localStorage.removeItem("persistent-form-values");
+            document.getElementById('exampleForm').reset();
+        });
+        document.getElementById('setDefaultValues').addEventListener('click', function() {
+            // Define default values
+            let defaultValues = {
+                username: "Bojack Horseman",
+                email: "boj@tornante.com",
+                bio: "Sitcom actor. Played Secretariat. Almost won an Oscar.",
+                birthday: "1964-01-02",
+                age: 59,
+                dinner: true,
+                country: "usa",
+                agreeTerms: true
+            };
+
+            // Populate the form and update local storage
+            for (const key in defaultValues) {
+                let el = document.getElementById(key);
+                if (el) {
+                    el.value = defaultValues[key];
+                    if (el.type === 'checkbox' || el.type === 'radio') {
+                        el.checked = defaultValues[key];
+                    }
+                    
+                    // for inputs
+                    let event = new Event('input', {
+                        bubbles: true,
+                        cancelable: true,
+                    });
+
+                    el.dispatchEvent(event);
+
+                    // for checkboxes/radio buttons
+                    event = new Event('change');
+                    el.dispatchEvent(event);
+                }
+            }
+        });
+    </script>
+</body>
+</html>
